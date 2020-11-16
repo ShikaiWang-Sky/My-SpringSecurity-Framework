@@ -10,10 +10,14 @@
 <div>
     <div>
         <form th:action="@{/login1}" method="get">
+            <input type="text" id="userName" placeholder="请输入用户名" name="userName">
+            <br>
+            <input type="password" id="password" placeholder="请输入密码" name="password">
+            <br>
             <input type="text" id="inputCode" placeholder="请输入验证码" maxlength="4" name="inputCode">
             <!--通过隐藏域传递值, 在下面的验证码点击事件中, 将值绑定过来, 这样就可以获得最新的验证码对应的值了!-->
             <input id="token" value="" type="hidden" name="token">
-            <input type="submit" value="提交">
+            <input type="submit" value="登录">
         </form>
 
     </div>
@@ -44,8 +48,6 @@
             }
         });
     }
-
-
 </script>
 
 </body>

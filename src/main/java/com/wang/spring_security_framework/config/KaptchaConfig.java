@@ -34,7 +34,7 @@ public class KaptchaConfig {
         // 字体
         properties.setProperty("kaptcha.textproducer.font.names", "宋体,楷体,微软雅黑");
         //图片干扰
-        properties.setProperty("kaptcha.noise.impl","com.google.code.kaptcha.impl.NoNoise");
+        properties.setProperty("kaptcha.noise.impl","com.google.code.kaptcha.impl.DefaultNoise");
 
         //Kaptcha 使用上述配置
         Config config = new Config(properties);
