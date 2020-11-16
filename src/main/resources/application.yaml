@@ -1,0 +1,53 @@
+#Port
+server:
+  port: 80
+  servlet:
+    session:
+      timeout: 1
+
+spring:
+  application:
+    name: SpringSecurityFramework
+
+  #dataBase Setting
+  datasource:
+    username: root
+    password: 123456
+    url: jdbc:mysql://localhost:3306/security?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+
+    #Druid Setting
+    druid:
+      initial-size: 5
+      min-idle: 5
+      max-active: 20
+      max-wait: 60000
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 30000
+      validation-query: SELECT 1 FROM DUAL
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      pool-prepared-statements: true
+      #Setting For Druid StatView and Filter
+      filters: stat,wall,log4j
+      max-pool-prepared-statement-per-connection-size: 20
+      use-global-data-source-stat: true
+      connection-properties: druid.stat.mergeSql=true;druid.stat.slowSql
+
+  #Redis Setting
+  redis:
+    host: 127.0.0.1
+    port: 6379
+
+  #Thymeleaf
+  thymeleaf:
+    cache: false
+
+#Mybatis
+mybatis:
+  type-aliases-package: com.wang.entity
+  mapper-locations: classpath:Mybatis/mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true

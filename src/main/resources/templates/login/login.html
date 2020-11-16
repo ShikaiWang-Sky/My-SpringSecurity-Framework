@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>登录</title>
+    <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.js"></script>
+</head>
+<body>
+
+<div>
+    <div>
+        <form th:action="@{/login1}" method="get">
+            <input type="text" id="inputCode" placeholder="请输入验证码" maxlength="4" name="inputCode">
+            <!--通过隐藏域传递值, 在下面的验证码点击事件中, 将值绑定过来, 这样就可以获得最新的验证码对应的值了!-->
+            <input id="token" value="" type="hidden" name="token">
+            <input type="submit" value="提交">
+        </form>
+
+    </div>
+    <div>
+        <!-- 当用户链接时，void(0)计算为0,用户点击不会发生任何效果 -->
+        <a href="javascript:void(0);" title="点击更换验证码">
+            <!--this参数, 返回当前的DOM元素-->
+            <img src="" alt="更换验证码" id="imgVerify" onclick="getVerify(this)">
+        </a>
+    </div>
+</div>
+
+<script>
+    //获得img对象
+    let imgVerify = $("#imgVerify").get(0);
+    //$(function())等同于$(document).ready(function()) ==> 页面加载完毕之后, 才执行函数
+    $(function () {
+        getVerify(imgVerify);
+    });
+    //onclick时间绑定的getVerify函数
+    function getVerify(obj) {
+        $.ajax({
+            type: "GET",
+            url: "/captcha",
+            success: function (result) {
+                obj.src = "data:image/jpeg;base64," + result.img;
+                $("#token").val(result.token);
+            }
+        });
+    }
+
+
+</script>
+
+</body>
+</html>
