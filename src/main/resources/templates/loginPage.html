@@ -17,7 +17,7 @@
         <span>登录</span>
     </div>
     <div class='login_fields'>
-        <form action="/login" method="post">
+        <form th:action="@{/login}" method="post">
             <div class='login_fields__user'>
                 <div class='icon'>
                     <img alt="" src='img/user_icon_copy.png'>
@@ -111,8 +111,6 @@
             let login = $('input[name="username"]').val();
             let pwd = $('input[name="password"]').val();
             let code = $('input[name="inputCode"]').val();
-            let token = $('input[name="token"]').val();
-            let JsonData = {username: login, password: pwd, inputCode: code, token: token};
             if (login === '') {
                 ErroAlert('请输入您的账号');
             } else if (pwd === '') {

@@ -11,5 +11,5 @@ public interface CaptchaService {
     //生成captcha验证码
     Map<String, Object> captchaCreator() throws IOException;
     //验证输入的验证码是否正确
-    String versifyCaptcha (String token, String inputCode);
+    Boolean versifyCaptcha (String token, String inputCode);
 }

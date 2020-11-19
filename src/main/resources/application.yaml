@@ -1,9 +1,6 @@
 #Port
 server:
   port: 80
-  servlet:
-    session:
-      timeout: 1
 
 spring:
   application:
@@ -47,7 +44,7 @@ spring:
 
 #Mybatis
 mybatis:
-  type-aliases-package: com.wang.entity
+  type-aliases-package: com.wang.spring_security_framework.entity.DTO
   mapper-locations: classpath:Mybatis/mapper/*.xml
   configuration:
     map-underscore-to-camel-case: true

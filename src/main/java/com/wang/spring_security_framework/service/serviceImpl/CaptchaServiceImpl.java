@@ -1,6 +1,7 @@
 package com.wang.spring_security_framework.service.serviceImpl;
 
 import com.google.code.kaptcha.impl.DefaultKaptcha;
+import com.wang.spring_security_framework.common.Constant;
 import com.wang.spring_security_framework.service.CaptchaService;
 import com.wang.spring_security_framework.util.CaptchaUtil;
 import com.wang.spring_security_framework.util.UUIDUtil;
@@ -25,10 +26,6 @@ public class CaptchaServiceImpl implements CaptchaService {
     @Autowired
     private CaptchaUtil captchaUtil;
 
-    //从SpringBoot的配置文件中取出过期时间
-    @Value("${server.servlet.session.timeout}")
-    private Integer timeout;
-
     //UUID为key, 验证码为Value放在Redis中
     @Override
     public Map<String, Object> createToken(String captcha) {
@@ -39,6 +36,7 @@ public class CaptchaServiceImpl implements CaptchaService {
         ValueOperations<String, Object> valueOperations = redisTemplate.opsForValue();
         valueOperations.set(key, captcha);
         //设置验证码过期时间
+        int timeout = Constant.CAPTCHA_TIME_OUT;
         redisTemplate.expire(key, timeout, TimeUnit.MINUTES);
 
         Map<String, Object> map = new HashMap<>();
@@ -55,19 +53,19 @@ public class CaptchaServiceImpl implements CaptchaService {
 
     //验证输入的验证码是否正确
     @Override
-    public String versifyCaptcha(String token, String inputCode) {
+    public Boolean versifyCaptcha(String token, String inputCode) {
         //根据前端传回的token在redis中找对应的value
         ValueOperations<String, Object> valueOperations = redisTemplate.opsForValue();
         if (redisTemplate.hasKey(token)) {
             //验证通过, 删除对应的key
             if (valueOperations.get(token).equals(inputCode)) {
                 redisTemplate.delete(token);
-                return "true";
+                return true;
             } else {
-                return "false";
+                return false;
             }
         } else {
-            return "false";
+            return false;
         }
     }
 }

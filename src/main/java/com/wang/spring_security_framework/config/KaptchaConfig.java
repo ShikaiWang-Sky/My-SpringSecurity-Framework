@@ -22,7 +22,7 @@ public class KaptchaConfig {
         // 字体颜色
         properties.setProperty("kaptcha.textproducer.font.color", "blue");
         // 图片宽
-        properties.setProperty("kaptcha.image.width", "110");
+        properties.setProperty("kaptcha.image.width", "100");
         // 图片高
         properties.setProperty("kaptcha.image.height", "40");
         // 字体大小
