@@ -59,7 +59,7 @@ public class CaptchaServiceImpl implements CaptchaService {
         if (redisTemplate.hasKey(token)) {
             //验证通过, 删除对应的key
             if (valueOperations.get(token).equals(inputCode)) {
-                redisTemplate.delete(token);
+//                redisTemplate.delete(token);
                 return true;
             } else {
                 return false;

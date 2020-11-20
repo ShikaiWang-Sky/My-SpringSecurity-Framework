@@ -17,46 +17,44 @@
         <span>登录</span>
     </div>
     <div class='login_fields'>
-        <form action="/login" method="post">
-            <div class='login_fields__user'>
-                <div class='icon'>
-                    <img alt="" src='img/user_icon_copy.png'>
-                </div>
-                <input name="username" placeholder='用户名' maxlength="16" type='text' autocomplete="off"/>
-                <div class='validation'>
-                    <img alt="" src='img/tick.png'>
-                </div>
+        <div class='login_fields__user'>
+            <div class='icon'>
+                <img alt="" src='img/user_icon_copy.png'>
             </div>
-            <div class='login_fields__password'>
-                <div class='icon'>
-                    <img alt="" src='img/lock_icon_copy.png'>
-                </div>
-                <input name="password" placeholder='密码' maxlength="16" type='text' autocomplete="off">
-                <div class='validation'>
-                    <img alt="" src='img/tick.png'>
-                </div>
+            <input name="username" placeholder='用户名' maxlength="16" type='text' autocomplete="off"/>
+            <div class='validation'>
+                <img alt="" src='img/tick.png'>
             </div>
-            <div class='login_fields__password'>
-                <div class='icon'>
-                    <img alt="" src='img/key.png'>
-                </div>
-                <input name="inputCode" placeholder='验证码' maxlength="4" type='text' autocomplete="off">
-                <div class='validation' style="opacity: 1; top: -3px;">
-                    <!-- 当用户链接时，void(0)计算为0,用户点击不会发生任何效果 -->
-                    <a href="javascript:void(0);" title="点击更换验证码">
-                        <!--this参数, 返回当前的DOM元素-->
-                        <img src="" alt="更换验证码" id="imgVerify" onclick="getVerify(this)">
-                    </a>
-                </div>
+        </div>
+        <div class='login_fields__password'>
+            <div class='icon'>
+                <img alt="" src='img/lock_icon_copy.png'>
             </div>
-            <div class='login_fields__submit'>
-                <input type='submit' value='登录'>
+            <input name="password" placeholder='密码' maxlength="16" type='text' autocomplete="off">
+            <div class='validation'>
+                <img alt="" src='img/tick.png'>
             </div>
-            <div>
-                <!--通过隐藏域传递值, 在下面的验证码点击事件中, 将值绑定过来, 这样就可以获得最新的验证码对应的值了!-->
-                <input name="token" value="" type="hidden" id="token">
+        </div>
+        <div class='login_fields__password'>
+            <div class='icon'>
+                <img alt="" src='img/key.png'>
             </div>
-        </form>
+            <input name="inputCode" placeholder='验证码' maxlength="4" type='text' autocomplete="off">
+            <div class='validation' style="opacity: 1; top: -3px;">
+                <!-- 当用户链接时，void(0)计算为0,用户点击不会发生任何效果 -->
+                <a href="javascript:void(0);" title="点击更换验证码">
+                    <!--this参数, 返回当前的DOM元素-->
+                    <img src="" alt="更换验证码" id="imgVerify" onclick="getVerify(this)">
+                </a>
+            </div>
+        </div>
+        <div class='login_fields__submit'>
+            <input type='button' value='登录'>
+        </div>
+        <div>
+            <!--通过隐藏域传递值, 在下面的验证码点击事件中, 将值绑定过来, 这样就可以获得最新的验证码对应的值了!-->
+            <input name="token" value="" type="hidden" id="token">
+        </div>
     </div>
 </div>
 
@@ -107,18 +105,57 @@
 
     layui.use('layer', function () {
         //非空验证
-        $('input[type="submit"]').click(function () {
+        $('input[type="button"]').click(function () {
             let login = $('input[name="username"]').val();
             let pwd = $('input[name="password"]').val();
             let code = $('input[name="inputCode"]').val();
             let token = $('input[name="token"]').val();
-            let JsonData = {username: login, password: pwd, inputCode: code, token: token};
+            let JsonData = {"username": login, "password": pwd, "inputCode": code, "token": token};
             if (login === '') {
                 ErroAlert('请输入您的账号');
             } else if (pwd === '') {
                 ErroAlert('请输入密码');
             } else if (code === '' || code.length !== 4) {
                 ErroAlert('输入验证码');
+            } else {
+                let url = "/login";
+                $.ajaxSetup({
+                    url: url,
+                    type: "post",
+                    dataType: "json",
+                    contentType: "application/json;charset=utf-8",
+                });
+                $.ajax({
+                    data: JSON.stringify(JsonData),
+                    success: function (data) {
+                        alert("进入success---");
+                        let code = data.code;
+                        let url = data.url;
+                        let msg = data.msg;
+                        if (code == 200) {
+                            alert(msg);
+                            window.location.href = url;
+                        } else if (code == 201) {
+                            alert(msg);
+                            window.location.href = url;
+                        } else if (code == 202){
+                           alert(msg);
+                           window.location.href = url;
+                        } else {
+                            alert("未知错误!");
+                        }
+                    },
+                    error: function (xhr, textStatus, errorThrown) {
+                        alert("进入error---");
+                        alert("状态码：" + xhr.status);
+                        alert("状态:" + xhr.readyState); //当前状态,0-未初始化，1-正在载入，2-已经载入，3-数据进行交互，4-完成。
+                        alert("错误信息:" + xhr.statusText);
+                        alert("返回响应信息：" + xhr.responseText);//这里是详细的信息
+                        alert("请求状态：" + textStatus);
+                        alert(errorThrown);
+                        alert("请求失败");
+                    }
+                });
             }
         });
     });

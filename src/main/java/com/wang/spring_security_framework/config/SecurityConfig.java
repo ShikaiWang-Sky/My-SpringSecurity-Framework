@@ -1,6 +1,8 @@
 package com.wang.spring_security_framework.config;
 
+import com.wang.spring_security_framework.config.SpringSecurityConfig.LoginFailHandler;
 import com.wang.spring_security_framework.config.SpringSecurityConfig.LoginSuccessHandler;
+import com.wang.spring_security_framework.config.SpringSecurityConfig.MyCustomAuthenticationFilter;
 import com.wang.spring_security_framework.service.UserService;
 import com.wang.spring_security_framework.service.serviceImpl.UserDetailServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +12,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 //SpringSecurity设置
 @EnableWebSecurity
@@ -20,30 +23,42 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     UserDetailServiceImpl userDetailServiceImpl;
     @Autowired
     LoginSuccessHandler loginSuccessHandler;
+    @Autowired
+    LoginFailHandler loginFailHandler;
 
     //授权
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         //指定自定义的登录页面, 表单提交的url, 以及成功后的处理器
         http.formLogin()
-                .usernameParameter("username")
-                .passwordParameter("password")
                 .loginPage("/toLoginPage")
-                .loginProcessingUrl("/login")
-                .successHandler(loginSuccessHandler)
-                .failureForwardUrl("/index")
-                .and()
-                .csrf()
-                .disable();
-//        .failureForwardUrl();
+                .and().csrf().disable();
         //注销
 
-
+        //设置过滤器链, 添加自定义过滤器
+        http.addFilterAt(
+                myCustomAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class
+        );
         //允许iframe
 //        http.headers().frameOptions().sameOrigin();
+    }
 
-        //默认开启了csrf, 会拦截所有的POST请求, 我这里简单的将其关闭了!
+    //注册自定义过滤器
+    @Bean
+    MyCustomAuthenticationFilter myCustomAuthenticationFilter() throws Exception {
 
+        MyCustomAuthenticationFilter filter = new MyCustomAuthenticationFilter();
+
+        //设置过滤器认证管理
+        filter.setAuthenticationManager(super.authenticationManagerBean());
+        //设置filter的url
+        filter.setFilterProcessesUrl("/login");
+        //设置登录成功处理器
+        filter.setAuthenticationSuccessHandler(loginSuccessHandler);
+        //设置登录失败处理器
+        filter.setAuthenticationFailureHandler(loginFailHandler);
+
+        return filter;
     }
 
     //密码使用盐值加密 BCryptPasswordEncoder
