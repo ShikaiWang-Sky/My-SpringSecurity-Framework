@@ -1,6 +1,9 @@
 package com.wang.spring_security_framework.service;
 
+import com.wang.spring_security_framework.entity.DTO.PermissionDTO;
 import com.wang.spring_security_framework.entity.DTO.UserDTO;
+
+import java.util.List;
 
 public interface UserService {
 
@@ -9,4 +12,6 @@ public interface UserService {
     UserDTO getUserByUsername(String username);
 
     Integer addUser(UserDTO user);
+
+    List<PermissionDTO> getPermissionByUserId(String userId);
 }

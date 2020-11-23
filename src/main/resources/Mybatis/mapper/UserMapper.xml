@@ -23,4 +23,17 @@
         values (#{username}, #{password});
     </insert>
 
+    <!--根据用户id查询用户权限-->
+    <select id="getPermissionByUserId" parameterType="string" resultType="permissionDTO">
+        select *
+        from t_permission
+        where `id` in (
+            select permission_id from t_role_permission
+            where role_id = (
+                select role_id from t_user_role
+                where user_id = #{userId}
+            )
+        )
+    </select>
+
 </mapper>

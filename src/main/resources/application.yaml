@@ -5,8 +5,6 @@ server:
 spring:
   application:
     name: SpringSecurityFramework
-#  main:
-#    allow-bean-definition-overriding: true
 
   #dataBase Setting
   datasource:

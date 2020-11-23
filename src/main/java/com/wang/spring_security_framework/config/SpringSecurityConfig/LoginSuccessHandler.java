@@ -10,7 +10,6 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 
 import javax.servlet.ServletException;
-import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -43,9 +42,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         Map<String, String> result = new HashMap<>();
         if (verifyResult) {
             HashMap<String, String> map = new HashMap<>();
-            map.put("url", "/index");
-            System.out.println(map);
-            String VerifySuccessUrl = "/index";
+            String VerifySuccessUrl = "/newPage";
             response.setHeader("Content-Type", "application/json;charset=utf-8");
             result.put("code", "200");
             result.put("msg", "认证成功!");

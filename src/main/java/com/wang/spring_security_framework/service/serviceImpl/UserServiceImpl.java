@@ -1,11 +1,14 @@
 package com.wang.spring_security_framework.service.serviceImpl;
 
 import com.wang.spring_security_framework.dao.UserMapper;
+import com.wang.spring_security_framework.entity.DTO.PermissionDTO;
 import com.wang.spring_security_framework.entity.DTO.UserDTO;
 import com.wang.spring_security_framework.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -41,4 +44,8 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public List<PermissionDTO> getPermissionByUserId(String userId) {
+        return userMapper.getPermissionByUserId(userId);
+    }
 }

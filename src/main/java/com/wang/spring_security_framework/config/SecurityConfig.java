@@ -2,6 +2,7 @@ package com.wang.spring_security_framework.config;
 
 import com.wang.spring_security_framework.config.SpringSecurityConfig.LoginFailHandler;
 import com.wang.spring_security_framework.config.SpringSecurityConfig.LoginSuccessHandler;
+import com.wang.spring_security_framework.config.SpringSecurityConfig.LogoutHandler;
 import com.wang.spring_security_framework.config.SpringSecurityConfig.MyCustomAuthenticationFilter;
 import com.wang.spring_security_framework.service.UserService;
 import com.wang.spring_security_framework.service.serviceImpl.UserDetailServiceImpl;
@@ -25,6 +26,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     LoginSuccessHandler loginSuccessHandler;
     @Autowired
     LoginFailHandler loginFailHandler;
+    @Autowired
+    LogoutHandler logoutHandler;
 
     //授权
     @Override
@@ -33,14 +36,28 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.formLogin()
                 .loginPage("/toLoginPage")
                 .and().csrf().disable();
-        //注销
+
+        //退出登录
+        http.logout()
+                .logoutUrl("/logout")
+                .logoutSuccessHandler(logoutHandler)
+                //退出时让Session无效
+                .invalidateHttpSession(true);
 
         //设置过滤器链, 添加自定义过滤器
         http.addFilterAt(
                 myCustomAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class
         );
         //允许iframe
-//        http.headers().frameOptions().sameOrigin();
+        http.headers().frameOptions().sameOrigin();
+
+        //授权
+        http
+                .authorizeRequests()
+                .antMatchers("/r/r1").hasAnyAuthority("p1")
+                .antMatchers("/r/r2").hasAnyAuthority("p2")
+                .antMatchers("/r/r3").access("hasAuthority('p1') and hasAuthority('p2')")
+                .antMatchers("/r/**").authenticated().anyRequest().permitAll();
     }
 
     //注册自定义过滤器

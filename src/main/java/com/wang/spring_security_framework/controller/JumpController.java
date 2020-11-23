@@ -22,4 +22,15 @@ public class JumpController {
     public String toIndexPage() {
         return "index";
     }
+
+    @RequestMapping("/page")
+    public String toContentPage() {
+        return "content/layout";
+    }
+
+    @RequestMapping("/newPage")
+    public String toNewPage() {
+        return "content/page";
+    }
+
 }

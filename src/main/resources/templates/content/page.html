@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>页面</title>
+</head>
+<body class="layui-layout-body">
+
+<div th:include="content/layout"></div>
+
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-body">
+        <!-- 内容主体区域 -->
+        <div style="padding: 15px;">成功应用模板!</div>
+        <div class="layui-btn-container">
+            <button type="button" class="layui-btn" onclick="btnClick1()">按钮一</button>
+            <button type="button" class="layui-btn" onclick="btnClick2()">按钮二</button>
+            <button type="button" class="layui-btn" onclick="btnClick3()">按钮三</button>
+        </div>
+    </div>
+</div>
+<script>
+    $.ajaxSetup({
+        type: "post",
+        dataType: "json",
+        contentType: "application/json;charset=utf-8",
+        success: function (data) {
+            let code = data.code;
+            let url = data.url;
+            let msg = data.msg;
+            if (code == 204) {
+                alert(msg);
+                window.location.href = url;
+            } else {
+                alert("未知错误!");
+            }
+        },
+        error: function (xhr, textStatus, errorThrown) {
+            alert("进入error---");
+            alert("状态码：" + xhr.status);
+            alert("状态:" + xhr.readyState); //当前状态,0-未初始化，1-正在载入，2-已经载入，3-数据进行交互，4-完成。
+            alert("错误信息:" + xhr.statusText);
+            alert("返回响应信息：" + xhr.responseText);//这里是详细的信息
+            alert("请求状态：" + textStatus);
+            alert(errorThrown);
+            alert("请求失败");
+        }
+    });
+
+    function btnClick1() {
+        let url = "/toR1";
+        $.ajax({
+            url: url,
+            type: "post",
+            dataType: "json",
+            contentType: "application/json;charset=utf-8",
+
+        });
+    }
+
+    function btnClick2() {
+        let url = "/toR2";
+        $.ajax({
+            url: url,
+            type: "post",
+            dataType: "json",
+            contentType: "application/json;charset=utf-8",
+
+        });
+    }
+
+    function btnClick3() {
+        let url = "/toR3";
+        $.ajax({
+            url: url,
+            type: "post",
+            dataType: "json",
+            contentType: "application/json;charset=utf-8",
+
+        });
+    }
+</script>
+</body>
+</html>

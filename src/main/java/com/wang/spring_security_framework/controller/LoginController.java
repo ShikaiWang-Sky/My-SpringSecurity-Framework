@@ -29,4 +29,6 @@ public class LoginController {
     public Integer register(UserDTO user) {
         return userService.addUser(user);
     }
+
+
 }
