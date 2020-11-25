@@ -132,8 +132,12 @@
                         let code = data.code;
                         let url = data.url;
                         let msg = data.msg;
+                        let jwt = data.jwt;
                         if (code == 200) {
                             alert(msg);
+                            alert(jwt);
+                            //成功登录, 则将token放入localStorage中
+                            localStorage.jwt = jwt;
                             window.location.href = url;
                         } else if (code == 201) {
                             alert(msg);

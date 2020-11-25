@@ -1,4 +1,4 @@
-package com.wang.spring_security_framework.config.SpringSecurityConfig;
+package com.wang.spring_security_framework.config.SpringSecurityConfig.SpringSecurityHandler;
 
 import com.alibaba.fastjson.JSON;
 import org.springframework.context.annotation.Configuration;

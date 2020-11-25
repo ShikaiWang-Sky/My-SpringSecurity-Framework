@@ -1,9 +1,13 @@
-package com.wang.spring_security_framework.config.SpringSecurityConfig;
+package com.wang.spring_security_framework.config.SpringSecurityConfig.SpringSecurityHandler;
 
 import com.alibaba.fastjson.JSON;
+import com.wang.spring_security_framework.common.SecurityConstant;
+import com.wang.spring_security_framework.config.SpringSecurityConfig.SpringSecurityConfigUtil.JWTUtil;
 import com.wang.spring_security_framework.service.CaptchaService;
+import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -23,12 +27,14 @@ import java.util.Map;
 public class LoginSuccessHandler implements AuthenticationSuccessHandler {
     @Autowired
     CaptchaService captchaService;
+    @Autowired
+    JWTUtil jwtUtil;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
-        //我们从自定义的认证过滤器中拿到的authInfo, 接下来做验证码校验和跳转
+        //我们从自定义的认证过滤器中拿到的authInfo, 接下来做验证码校验和跳转, 以及JWT的生成
         Map<String, String> authInfo = (Map<String, String>) request.getAttribute("authInfo");
         System.out.println(authInfo);
         System.out.println("success!");
@@ -40,13 +46,19 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         System.out.println(verifyResult);
 
         Map<String, String> result = new HashMap<>();
+        //验证码正确, 则生成JWT
         if (verifyResult) {
             HashMap<String, String> map = new HashMap<>();
+            //成功的跳转页面
             String VerifySuccessUrl = "/newPage";
             response.setHeader("Content-Type", "application/json;charset=utf-8");
             result.put("code", "200");
             result.put("msg", "认证成功!");
             result.put("url", VerifySuccessUrl);
+            //JWT生成
+            String jwt = jwtUtil.JWTCreator(authentication);
+            result.put("jwt", jwt);
+
             PrintWriter writer = response.getWriter();
             writer.write(JSON.toJSONString(result));
         } else {

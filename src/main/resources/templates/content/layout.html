@@ -105,6 +105,8 @@
                         let msg = data.msg;
                         if (code == 203) {
                             alert(msg);
+                            //清除jwt
+                            localStorage.removeItem("jwt");
                             window.location.href = url;
                         } else {
                             alert("未知错误!");

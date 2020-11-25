@@ -1,9 +1,9 @@
 package com.wang.spring_security_framework.config;
 
-import com.wang.spring_security_framework.config.SpringSecurityConfig.LoginFailHandler;
-import com.wang.spring_security_framework.config.SpringSecurityConfig.LoginSuccessHandler;
-import com.wang.spring_security_framework.config.SpringSecurityConfig.LogoutHandler;
-import com.wang.spring_security_framework.config.SpringSecurityConfig.MyCustomAuthenticationFilter;
+import com.wang.spring_security_framework.config.SpringSecurityConfig.SpringSecurityHandler.LoginFailHandler;
+import com.wang.spring_security_framework.config.SpringSecurityConfig.SpringSecurityHandler.LoginSuccessHandler;
+import com.wang.spring_security_framework.config.SpringSecurityConfig.SpringSecurityHandler.LogoutHandler;
+import com.wang.spring_security_framework.config.SpringSecurityConfig.SpringSecurityFilter.MyCustomAuthenticationFilter;
 import com.wang.spring_security_framework.service.UserService;
 import com.wang.spring_security_framework.service.serviceImpl.UserDetailServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;

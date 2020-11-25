@@ -136,6 +136,14 @@
             <version>2.3.2</version>
         </dependency>
 
+        <!--Jwt, 这里用的是JJWT-->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <version>0.9.1</version>
+        </dependency>
+
+
     </dependencies>
 
     <build>
