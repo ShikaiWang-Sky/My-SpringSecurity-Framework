@@ -41,7 +41,6 @@ public class MyCustomAuthenticationFilter extends UsernamePasswordAuthentication
                 setDetails(request, authRequest);
                 //将我们前端传递的JSON对象继续放在request里传递, 这样我们就可以在认证成功的处理器中拿到它了!
                 request.setAttribute("authInfo", authenticationBean);
-
                 return this.getAuthenticationManager().authenticate(authRequest);
             }
         } else {

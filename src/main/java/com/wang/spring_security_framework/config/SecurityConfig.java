@@ -1,9 +1,10 @@
 package com.wang.spring_security_framework.config;
 
+import com.wang.spring_security_framework.config.SpringSecurityConfig.SpringSecurityFilter.JwtFilter;
+import com.wang.spring_security_framework.config.SpringSecurityConfig.SpringSecurityFilter.MyCustomAuthenticationFilter;
 import com.wang.spring_security_framework.config.SpringSecurityConfig.SpringSecurityHandler.LoginFailHandler;
 import com.wang.spring_security_framework.config.SpringSecurityConfig.SpringSecurityHandler.LoginSuccessHandler;
 import com.wang.spring_security_framework.config.SpringSecurityConfig.SpringSecurityHandler.LogoutHandler;
-import com.wang.spring_security_framework.config.SpringSecurityConfig.SpringSecurityFilter.MyCustomAuthenticationFilter;
 import com.wang.spring_security_framework.service.UserService;
 import com.wang.spring_security_framework.service.serviceImpl.UserDetailServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,9 +12,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 
 //SpringSecurity设置
 @EnableWebSecurity
@@ -33,23 +36,27 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         //指定自定义的登录页面, 表单提交的url, 以及成功后的处理器
-        http.formLogin()
+        http.
+                formLogin()
                 .loginPage("/toLoginPage")
-                .and().csrf().disable();
+                .and().csrf().disable().cors();
 
         //退出登录
-        http.logout()
+        http
+                .logout()
                 .logoutUrl("/logout")
                 .logoutSuccessHandler(logoutHandler)
                 //退出时让Session无效
                 .invalidateHttpSession(true);
 
         //设置过滤器链, 添加自定义过滤器
-        http.addFilterAt(
-                myCustomAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class
-        );
+        http
+                .addFilter(myCustomAuthenticationFilter())
+                .addFilterBefore(jwtFilter(), LogoutFilter.class);
+
         //允许iframe
-        http.headers().frameOptions().sameOrigin();
+        http
+                .headers().frameOptions().sameOrigin();
 
         //授权
         http
@@ -58,6 +65,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/r/r2").hasAnyAuthority("p2")
                 .antMatchers("/r/r3").access("hasAuthority('p1') and hasAuthority('p2')")
                 .antMatchers("/r/**").authenticated().anyRequest().permitAll();
+
+        http
+                // 基于token，所以不需要session
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
     }
 
     //注册自定义过滤器
@@ -76,6 +89,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         filter.setAuthenticationFailureHandler(loginFailHandler);
 
         return filter;
+    }
+
+    //注册JWT过滤器
+    @Bean
+    public JwtFilter jwtFilter() throws Exception {
+        return new JwtFilter();
     }
 
     //密码使用盐值加密 BCryptPasswordEncoder

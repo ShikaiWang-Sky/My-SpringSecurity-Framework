@@ -1,16 +1,21 @@
 package com.wang.spring_security_framework;
 
 import com.wang.spring_security_framework.common.SecurityConstant;
+import com.wang.spring_security_framework.config.SpringSecurityConfig.SpringSecurityConfigUtil.JWTUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Date;
 
 @SpringBootTest
 class SpringSecurityFrameworkApplicationTests {
+
+    @Autowired
+    JWTUtil jwtUtil;
 
     @Test
     void JWTCreatorTest() {
@@ -45,6 +50,15 @@ class SpringSecurityFrameworkApplicationTests {
         System.out.println("authority: " + authority);
         Date expiration = claims.getExpiration();
         System.out.println("expiration: " + expiration);
+    }
+
+    @Test
+    public void jwtUtilTest() {
+        String token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImNyZWF0ZWQiOjE2MDYzNjk1ODkwOTAsImV4cCI6MTYwNjM3MDAwOSwiYXV0aG9yaXRpZXMiOiJwMSxwMiwifQ.ciUbYjE-HqpH_Dp9u2akzCijYl7Kjga4Mk4VTmw4Se0";
+        String usernameFromToken = jwtUtil.getUsernameFromToken(token);
+        System.out.println(jwtUtil.getCreatedDateFromToken(token));
+        System.out.println(jwtUtil.getExpirationDateFromToken(token));
+        System.out.println(usernameFromToken);
     }
 
 }

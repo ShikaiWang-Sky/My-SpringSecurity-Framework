@@ -1,6 +1,10 @@
 package com.wang.spring_security_framework.config.SpringSecurityConfig.SpringSecurityHandler;
 
 import com.alibaba.fastjson.JSON;
+import com.wang.spring_security_framework.config.SpringSecurityConfig.SpringSecurityConfigUtil.UserRepository;
+import com.wang.spring_security_framework.service.serviceImpl.UserDetailServiceImpl;
+import com.wang.spring_security_framework.service.serviceImpl.UserServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
@@ -15,6 +19,9 @@ import java.util.HashMap;
 
 @Component
 public class LogoutHandler implements LogoutSuccessHandler {
+    @Autowired
+    UserRepository userRepository;
+
     @Override
     public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         HashMap<String, String> result = new HashMap<>();
@@ -25,5 +32,7 @@ public class LogoutHandler implements LogoutSuccessHandler {
         result.put("url", returnUrl);
         PrintWriter writer = response.getWriter();
         writer.write(JSON.toJSONString(result));
+        //清除用户缓存
+        userRepository.remove(authentication.getName());
     }
 }

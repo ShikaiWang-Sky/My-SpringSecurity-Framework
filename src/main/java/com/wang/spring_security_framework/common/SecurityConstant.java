@@ -39,5 +39,5 @@ public interface SecurityConstant {
     /**
      * JWT过期时间, 毫秒
      */
-    Long EXPIRATION_TIME = (long) (7 * 60 * 1000);
+    Long EXPIRATION_TIME = (long) (6 * 60 * 1000);
 }

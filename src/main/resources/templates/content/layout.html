@@ -28,7 +28,7 @@
             <li class="layui-nav-item">
                 <a href="javascript:;">
                     <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
-                    <span sec:authentication="principal.username"></span>
+                    <span id="showUsername"></span>
                 </a>
                 <dl class="layui-nav-child">
                     <dd><a href="">基本资料</a></dd>
@@ -79,6 +79,7 @@
 <script type="text/javascript" th:src="@{js/jquery.min.js}"></script>
 <script type="text/javascript" th:src="@{js/jquery-ui.min.js}"></script>
 <script type="text/javascript" th:src="@{js/jquery.mockjax.js}"></script>
+<script type="text/javascript" th:src="@{axios.min.js}"></script>
 <script th:src="@{layui.js}"></script>
 <script>
     //JavaScript代码区域
@@ -93,40 +94,95 @@
             layer.confirm('确定要退出么?', {icon: 3, title: '提示'}, function (index) {
                 //do something
                 let url = '/logout';
-                $.ajax({
+
+                //添加request拦截器, 为所有请求添加header
+                axios.interceptors.request.use(function (config) {
+                    //请求头要这样添加
+                    config.headers['accessToken'] = "Bearer " + localStorage.getItem("jwt");
+                    return config;
+                }, function (error) {
+                   return Promise.reject(error);
+                });
+
+                //注意, axios的回调函数和ajax不一样, response是一个封装的结果, 要用response.data.xxx才能得到结果
+                axios({
+                    method: 'post',
                     url: url,
-                    type: "post",
-                    dataType: "json",
-                    contentType: "application/json;charset=utf-8",
-                    success: function (data) {
-                        alert("进入success---");
-                        let code = data.code;
-                        let url = data.url;
-                        let msg = data.msg;
-                        if (code == 203) {
-                            alert(msg);
-                            //清除jwt
-                            localStorage.removeItem("jwt");
-                            window.location.href = url;
-                        } else {
-                            alert("未知错误!");
-                        }
-                    },
-                    error: function (xhr, textStatus, errorThrown) {
-                        alert("进入error---");
-                        alert("状态码：" + xhr.status);
-                        alert("状态:" + xhr.readyState); //当前状态,0-未初始化，1-正在载入，2-已经载入，3-数据进行交互，4-完成。
-                        alert("错误信息:" + xhr.statusText);
-                        alert("返回响应信息：" + xhr.responseText);//这里是详细的信息
-                        alert("请求状态：" + textStatus);
-                        alert(errorThrown);
-                        alert("请求失败");
+                    responseType: 'json',
+                    responseEncoding: 'utf8',
+                    headers: {
+                        "accessToken": ("Bearer " + localStorage.getItem("jwt"))
                     }
+                })
+                .then(function (response) {
+                    alert("进入success---");
+                    let code = response.data.code;
+                    let url = response.data.url;
+                    let msg = response.data.msg;
+                    if (code === '203') {
+                        alert(msg);
+                        //清除jwt
+                        localStorage.removeItem("jwt");
+                        //清除username
+                        localStorage.removeItem("username");
+                        //跳转
+                        window.location.href = url;
+                    } else {
+                        alert("未知错误!");
+                    }
+                })
+                .catch(function (error) {
+                    if (error.response) {
+                        // The request was made and the server responded with a status code
+                        // that falls out of the range of 2xx
+                        console.log(error.response.data);
+                        console.log(error.response.status);
+                        console.log(error.response.headers);
+                    } else if (error.request) {
+                        // The request was made but no response was received
+                        // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+                        // http.ClientRequest in node.js
+                        console.log(error.request);
+                    } else {
+                        // Something happened in setting up the request that triggered an Error
+                        console.log('Error', error.message);
+                    }
+                    console.log(error.config);
                 });
                 layer.close(index);
             });
         });
     }
+
+    //页面加载完毕后执行, 显示username ==> 从localstorage中取
+    $(window).load(function () {
+        let username = localStorage.getItem("username");
+       $("#showUsername").text(username);
+       JWTRefreshCheck();
+    });
+    
+    //定时询问JWT是否过期 ==> 每500毫秒发送请求
+    function JWTRefreshCheck() {
+        setInterval(function () {
+                $.ajax({
+                    type: "post",
+                    dataType: "json",
+                    contentType: "application/json;charset=utf-8",
+                    url: '/refreshJWT',
+                    //请求头中放入JWT
+                    beforeSend: function (request) {
+                        request.setRequestHeader("accessToken", "Bearer " + localStorage.getItem("jwt"));
+                    },
+                    success: function (data) {
+                        if (data.needRefresh == true) {
+                            localStorage.setItem("jwt", data.refreshedToken);
+                        }
+                    }
+                });
+        },
+        500);
+    }
+
 </script>
 </body>
 </html>

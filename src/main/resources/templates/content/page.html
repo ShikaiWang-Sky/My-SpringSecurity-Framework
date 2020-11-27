@@ -30,9 +30,25 @@
             let msg = data.msg;
             if (code == 204) {
                 alert(msg);
-                window.location.href = url;
+                let xhr = new XMLHttpRequest();
+                xhr.open("get", url);
+                xhr.setRequestHeader("accessToken", "Bearer " + localStorage.getItem("jwt"));
+                // window.location.href = url;
+                xhr.send(null);
+                //回调函数, 这里一定要同时判断两个状态, 否则会多次执行(与xhr的原理有关)
+                xhr.onreadystatechange = function () {
+                    //判断xhr的状态以及http的状态, 发送完毕且200才执行
+                    if(xhr.readyState == 4 && xhr.status == 200) {
+                        data = xhr.responseText;
+                        alert(data);
+                    } else if (xhr.readyState == 4 && xhr.status == 403){
+                        //403 ==> 没有权限的响应
+                        alert("没有权限!")
+                    }
+                }
+
             } else {
-                alert("未知错误!");
+                alert("未知错误!" + code + url);
             }
         },
         error: function (xhr, textStatus, errorThrown) {
@@ -44,41 +60,50 @@
             alert("请求状态：" + textStatus);
             alert(errorThrown);
             alert("请求失败");
-        }
+        },
+        //请求头中放入JWT
+        beforeSend: function (request) {
+            request.setRequestHeader("accessToken", "Bearer " + localStorage.getItem("jwt"));
+        },
     });
 
     function btnClick1() {
         let url = "/toR1";
         $.ajax({
-            url: url,
-            type: "post",
-            dataType: "json",
-            contentType: "application/json;charset=utf-8",
-
+            url: url
         });
     }
 
     function btnClick2() {
         let url = "/toR2";
         $.ajax({
-            url: url,
-            type: "post",
-            dataType: "json",
-            contentType: "application/json;charset=utf-8",
-
+            url: url
         });
     }
 
     function btnClick3() {
         let url = "/toR3";
         $.ajax({
-            url: url,
+            url: url
+        });
+    }
+
+    //页面加载时就调用, 将用户名存放在localstorage中(注意语法)
+    $(function () {
+        $.ajax({
             type: "post",
             dataType: "json",
             contentType: "application/json;charset=utf-8",
-
+            url: '/r/username',
+            //请求头中放入JWT
+            beforeSend: function (request) {
+                request.setRequestHeader("accessToken", "Bearer " + localStorage.getItem("jwt"));
+            },
+            success: function (data) {
+                localStorage.username = data;
+            }
         });
-    }
+    });
 </script>
 </body>
 </html>

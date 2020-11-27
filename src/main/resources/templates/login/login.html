@@ -128,17 +128,22 @@
                 $.ajax({
                     data: JSON.stringify(JsonData),
                     success: function (data) {
-                        alert("进入success---");
                         let code = data.code;
                         let url = data.url;
                         let msg = data.msg;
                         let jwt = data.jwt;
                         if (code == 200) {
                             alert(msg);
-                            alert(jwt);
                             //成功登录, 则将token放入localStorage中
                             localStorage.jwt = jwt;
                             window.location.href = url;
+                            $.ajax({
+                                url: url,
+                                //请求头中放入JWT
+                                beforeSend: function(request) {
+                                    request.setRequestHeader("accessToken", "Bearer " + localStorage.getItem("jwt"));
+                                },
+                            })
                         } else if (code == 201) {
                             alert(msg);
                             window.location.href = url;
@@ -158,7 +163,7 @@
                         alert("请求状态：" + textStatus);
                         alert(errorThrown);
                         alert("请求失败");
-                    }
+                    },
                 });
             }
         });
