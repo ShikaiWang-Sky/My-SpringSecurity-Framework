@@ -1,19 +1,13 @@
 package com.wang.spring_security_framework.config.SpringSecurityConfig.SpringSecurityHandler;
 
 import com.alibaba.fastjson.JSON;
-import com.wang.spring_security_framework.common.SecurityConstant;
 import com.wang.spring_security_framework.config.SpringSecurityConfig.SpringSecurityConfigUtil.JWTUtil;
 import com.wang.spring_security_framework.config.SpringSecurityConfig.SpringSecurityConfigUtil.UserRepository;
 import com.wang.spring_security_framework.service.CaptchaService;
 import com.wang.spring_security_framework.service.serviceImpl.UserDetailServiceImpl;
-import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
